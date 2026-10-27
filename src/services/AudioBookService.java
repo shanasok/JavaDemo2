@@ -19,7 +19,7 @@ public class AudioBookService {
 
         // 3. Building the streaming payload link
         String streamingUrl = String.format(
-                "https://library.com",
+                "https://library.com/stream/%s?codec=%s&token=%s&expires=%d",
                 audioBookDto.getBookMetadata().getIsbn(),
                 audioBookDto.getAudioCodec().toLowerCase(),
                 secureToken,

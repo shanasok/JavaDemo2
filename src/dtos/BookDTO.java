@@ -57,4 +57,6 @@ public class BookDTO {
     public void setShippingWeightPounds(double shippingWeightPounds) {
         this.shippingWeightPounds = shippingWeightPounds;
     }
+
+
 }
