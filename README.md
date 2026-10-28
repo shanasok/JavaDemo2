@@ -17,9 +17,11 @@ src/
 ├── Main.java          Runs every bad example next to its good example
 ├── badexamples/       Code that breaks a principle, one package per principle
 ├── goodexamples/      The same problem solved properly, mirroring badexamples
-├── dtos/              Shared data classes (BookDTO, AudioBookDTO, BookMetadata)
+├── dtos/              Shared data classes (BookDTO, AudioBookDTO, BookMetadata, LoanDTO)
 ├── enums/             Shared enums (AudienceAgeEnum)
-└── services/          Library services (BookService, AudioBookService), not yet used by the examples
+├── models/            Domain models with business rules (Borrowable, LibraryItem, Book, AudioBook)
+├── mappers/           Convert between DTOs and models (BookMapper, AudioBookMapper, LoanMapper)
+└── services/          Library services (BookService, AudioBookService, LoanService)
 ```
 
 Each principle has a matching pair of packages, for example `badexamples/openclosed` and `goodexamples/openclosed`. Read the bad version first, then the good one. Every good class starts with a "Compare with ..." comment pointing to the bad class it fixes, and comments marked ❌ and ✅ point out exactly where the principle is broken or followed.
@@ -74,3 +76,23 @@ Look at goodexamples/interfacesegregation/Shelvable.java, goodexamples/interface
 Look at the class badexamples/dependencyinversion/BadOverdueNotifier.java. It holds the high-level business rule of telling members when a book is overdue, but it creates a concrete EmailSender itself with new EmailSender(). This violates the Dependency Inversion Principle, which says high-level modules should not depend on low-level modules; both should depend on abstractions. Because the notifier is hard-wired to email, switching to SMS or using a fake sender in a unit test means modifying BadOverdueNotifier.
 
 Look at the class goodexamples/dependencyinversion/OverdueNotifier.java for the fixed version. It depends on the NotificationSender interface, and the concrete sender is passed in through its constructor (dependency injection). EmailNotificationSender and SmsNotificationSender both implement NotificationSender, so the caller decides how members are notified, and OverdueNotifier never changes.
+
+## For teachers: domain models and mappers
+
+You are on the `feature/domain-models-and-mappers` branch, the more mature stage of the lesson. The `main` branch is the starting point, with only the SOLID examples, DTOs and services. To go back to it:
+
+```
+git switch main
+```
+
+Compared with `main`, this branch adds:
+
+- **Domain models** (`models/`): `Book` and `AudioBook` hold the business rules, separate from the DTOs that only carry data in and out of the app.
+- **A `Borrowable` interface and an abstract `LibraryItem` base class**: the borrowing logic lives once in `LibraryItem`, and each item type only says how long its loans last.
+- **Mappers** (`mappers/`): `BookMapper`, `AudioBookMapper` and `LoanMapper` convert between DTOs and models, so models never depend on DTOs.
+- **A `LoanService`** that takes a DTO, maps it to a model, applies the borrowing rules, and returns a `LoanDTO`. Its public methods only do the mapping, and the shared borrowing steps live in one private method.
+- **`BookDAO` now saves a `Book` model** instead of a `BookDTO`, because DTOs belong at the edges of the app and shouldn't reach the data access layer.
+
+A good order to walk through it: `models/Borrowable.java`, `models/LibraryItem.java`, `models/Book.java`, `mappers/BookMapper.java`, then `services/LoanService.java`.
+
+Commit or stash any live edits before switching. The branches are kept separate on purpose, so don't merge one into the other.
