@@ -20,6 +20,7 @@ import goodexamples.openclosed.AudioBookLateFeePolicy;
 import goodexamples.openclosed.BookLateFeePolicy;
 import goodexamples.openclosed.FeeCalculator;
 import goodexamples.singleresponsibility.BookDAO;
+import mappers.BookMapper;
 
 /*
 * Runs each bad example next to its good example, one SOLID principle at a time.
@@ -44,7 +45,7 @@ public class Main {
         System.out.print("Bad:  ");
         new BadBook().saveToDatabase();
         System.out.print("Good: ");
-        new BookDAO().save(book);
+        new BookDAO().save(new BookMapper().toModel(book));
     }
 
     private static void demoOpenClosed(BookDTO book, AudioBookDTO audioBook) {

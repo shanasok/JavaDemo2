@@ -47,9 +47,9 @@ The output walks through the principles in order, showing what the bad version d
 
 ## Single Responsibility Principle
 
-Look at the class badexamples/singleresponsibility/BadBook.java. It has two responsibilities: 1) holding a book's data (isbn, title, author, and getBookSummary()) and 2) saving itself to the database with saveToDatabase(). This violates the Single Responsibility Principle, which says a class should have only one reason to change. If we need to change how books are stored, such as a new table structure or a different database, we would have to modify BadBook, which could introduce bugs in the book data code. A better design keeps the book data in a class like BookDTO and moves the persistence logic into a separate data access object (DAO), such as a BookDAO.
+Look at the class badexamples/singleresponsibility/BadBook.java. It has two responsibilities: 1) holding a book's data (isbn, title, author, and getBookSummary()) and 2) saving itself to the database with saveToDatabase(). This violates the Single Responsibility Principle, which says a class should have only one reason to change. If we need to change how books are stored, such as a new table structure or a different database, we would have to modify BadBook, which could introduce bugs in the book data code. A better design keeps the book data in a model class like models/Book and moves the persistence logic into a separate data access object (DAO), such as a BookDAO.
 
-Look at the class goodexamples/singleresponsibility/BookDAO.java for the fixed version. Its only job is saving books to the database, using the save() method. The book data lives in dtos/BookDTO, which knows nothing about databases. Now a change to how books are stored only touches BookDAO, and a change to the book's fields only touches BookDTO.
+Look at the class goodexamples/singleresponsibility/BookDAO.java for the fixed version. Its only job is saving books to the database, using the save() method. The book data lives in models/Book, which knows nothing about databases. Now a change to how books are stored only touches BookDAO, and a change to the book's fields only touches Book.
 
 ## Open/Closed Principle
 
