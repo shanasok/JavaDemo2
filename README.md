@@ -74,3 +74,20 @@ Look at goodexamples/interfacesegregation/Shelvable.java, goodexamples/interface
 Look at the class badexamples/dependencyinversion/BadOverdueNotifier.java. It holds the high-level business rule of telling members when a book is overdue, but it creates a concrete EmailSender itself with new EmailSender(). This violates the Dependency Inversion Principle, which says high-level modules should not depend on low-level modules; both should depend on abstractions. Because the notifier is hard-wired to email, switching to SMS or using a fake sender in a unit test means modifying BadOverdueNotifier.
 
 Look at the class goodexamples/dependencyinversion/OverdueNotifier.java for the fixed version. It depends on the NotificationSender interface, and the concrete sender is passed in through its constructor (dependency injection). EmailNotificationSender and SmsNotificationSender both implement NotificationSender, so the caller decides how members are notified, and OverdueNotifier never changes.
+    
+## For teachers: moving on to domain models and mappers
+
+This `main` branch is the starting point of the lesson. When the class is ready for a more mature version of the same library, switch to the `feature/domain-models-and-mappers` branch:
+
+```
+git switch feature/domain-models-and-mappers
+```
+
+That branch builds on everything here and adds:
+
+- **Domain models** (`models/`): `Book` and `AudioBook` hold the business rules, separate from the DTOs that only carry data in and out of the app.
+- **A `Borrowable` interface and an abstract `LibraryItem` base class**: the borrowing logic lives once in `LibraryItem`, and each item type only says how long its loans last.
+- **Mappers** (`mappers/`): `BookMapper`, `AudioBookMapper` and `LoanMapper` convert between DTOs and models, so models never depend on DTOs.
+- **A `LoanService`** that takes a DTO, maps it to a model, applies the borrowing rules, and returns a `LoanDTO`.
+
+Commit or stash any live edits before switching, and run `git switch main` to come back. The branches are kept separate on purpose, so don't merge one into the other.
